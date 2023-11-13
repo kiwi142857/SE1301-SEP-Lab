@@ -7,7 +7,13 @@
 void test_tree() {
   std::vector<int> numbers;
   for (int i = 0; i < 100; ++i) {
-    numbers.push_back(rand() % 10000 + 1);
+    // generate random numbers between 1 and 10000
+    // require different numbers
+    int number = std::rand() % 10000 + 1;
+    while (std::find(numbers.begin(), numbers.end(), number) != numbers.end()) {
+      number = std::rand() % 10000 + 1;
+    }
+    numbers.push_back(number);
   }
 
   std::shuffle(numbers.begin(), numbers.end(), std::mt19937{std::random_device{}()});
