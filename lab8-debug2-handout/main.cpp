@@ -14,14 +14,14 @@ void test_tree() {
 
   tree_t tree(100);
   for (const auto& number : numbers) {
-    tree.set(number, number);
-    assert(tree.get(number) == number);
+    tree.set(number, number*10);
+    assert(tree.get(number) == number*10);
   }
 
   std::shuffle(numbers.begin(), numbers.end(), std::mt19937{std::random_device{}()});
 
   for (const auto& number : numbers) {
-    assert(tree.get(number) == number);
+    assert(tree.get(number) == number*10);
   }
 
   std::shuffle(numbers.begin(), numbers.end(), std::mt19937{std::random_device{}()});
@@ -33,7 +33,7 @@ void test_tree() {
 
   // test the remaining numbers
   for (int i = 50; i < 100; ++i) {
-    assert(tree.get(numbers[i]) == numbers[i]);
+    assert(tree.get(numbers[i]) == numbers[i]*10);
   }
 }
 
