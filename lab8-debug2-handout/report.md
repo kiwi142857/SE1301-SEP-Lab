@@ -39,3 +39,9 @@
    Line 239: ``node->down.erase(node->down.begin(), node->down.end()); delete node;``  
    Fix method: add ``node->down.erase(node->down.begin(), node->down.end()); delete node;``   before ``for (int i = 0; i < next->up->down.size(); i++) {``  
    Reason: Memory leak of deleted node.  
+
+## Problem 7:
+   Type: Memory leak.
+   Line 338: ``root->up = nullptr``;
+   Fix method: add ``root->up->down.erase(root->up->down.begin(), root->up->down.end());delete root->up;`` before ``root->up = nullptr;`` .
+   Reason: Memory leak of deleted node.
