@@ -236,8 +236,6 @@ public:
     if (node->right)
       node->right->left = node;
       
-    next->down.erase(next->down.begin(), next->down.end());
-    delete next;
     for (int i = 0; i < next->up->down.size(); i++) {
       if (node->up->down[i] == next) {
         node->up->key_list.erase(node->up->key_list.begin() + i - 1);
@@ -246,6 +244,8 @@ public:
         break;
       }
     }
+    next->down.erase(next->down.begin(), next->down.end());
+    delete next;
   }
 
   void merge_node_with_left_leaf(node_t *node, node_t *prev) {
@@ -258,8 +258,6 @@ public:
     if (prev->right)
       prev->right->left = prev;
 
-    node->down.erase(node->down.begin(), node->down.end());
-    delete node;
     for (int i = 0; i < node->up->down.size(); i++) {
       if (node->up->down[i] == node) {
         node->up->key_list.erase(node->up->key_list.begin() + i - 1);
@@ -267,6 +265,8 @@ public:
         break;
       }
     }
+    node->down.erase(node->down.begin(), node->down.end());
+    delete node;
   }
 
   void borrow_key_from_right_internal(int my_position_in_parent, node_t *node,
@@ -361,6 +361,7 @@ public:
         } else if (prev && prev->up == node->up &&
                    prev->key_list.size() <= min_capacity) {
           merge_node_with_left_leaf(node, prev);
+          node = prev;
         }
       } else {
         int my_position_in_parent = -1;
@@ -405,6 +406,7 @@ public:
         else if (prev && prev->up == node->up &&
                  prev->key_list.size() <= min_capacity) {
           merge_node_with_left_internal(my_position_in_parent, node, prev);
+          node = prev;
         }
       }
     }
