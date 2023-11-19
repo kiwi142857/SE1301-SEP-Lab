@@ -6,7 +6,7 @@
 #include <stdexcept>
 #include <utility>
 #include <vector>
-#include <tuple>
+
 class node_t {
 public:
   node_t(node_t *parent = nullptr, bool is_leaf = false,
@@ -111,7 +111,7 @@ public:
   }
 
   std::tuple<int, node_t *, node_t *> split_leaf() {
-    node_t *left = new node_t(up, true, this->left, this);
+    left = new node_t(up, true, left, this);
     int mid = key_list.size() / 2;
 
     left->key_list = std::vector<int>(key_list.begin(), key_list.begin() + mid);
@@ -235,17 +235,14 @@ public:
     node->right = next->right;
     if (node->right)
       node->right->left = node;
-      
     for (int i = 0; i < next->up->down.size(); i++) {
       if (node->up->down[i] == next) {
         node->up->key_list.erase(node->up->key_list.begin() + i - 1);
         node->up->down.erase(node->up->down.begin() + i);
-
+        delete next;
         break;
       }
     }
-    next->down.erase(next->down.begin(), next->down.end());
-    delete next;
   }
 
   void merge_node_with_left_leaf(node_t *node, node_t *prev) {
@@ -262,11 +259,10 @@ public:
       if (node->up->down[i] == node) {
         node->up->key_list.erase(node->up->key_list.begin() + i - 1);
         node->up->down.erase(node->up->down.begin() + i);
+        delete node;
         break;
       }
     }
-    node->down.erase(node->down.begin(), node->down.end());
-    delete node;
   }
 
   void borrow_key_from_right_internal(int my_position_in_parent, node_t *node,
@@ -304,7 +300,7 @@ public:
     for (node_t *child : node->down) {
       child->up = node;
     }
-    next->down.erase(next->down.begin(), next->down.end());
+    next->down.erase(next->down.begin(),next->down.end());
     delete next;
   }
 
@@ -321,7 +317,7 @@ public:
     for (node_t *child : prev->down) {
       child->up = prev;
     }
-    node->down.erase(node->down.begin(), node->down.end());
+    node->down.erase(node->down.begin(),node->down.end());
     delete node;
   }
 
@@ -339,6 +335,8 @@ public:
       if (node == root) {
         if (root->key_list.empty() && !root->down.empty()) {
           root = root->down[0];
+          root->up->down.erase(root->up->down.begin(),root->up->down.end());
+          delete root->up;
           root->up = nullptr;
           height -= 1;
         }
